@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#181426">
+    <meta name="referrer" content="no-referrer">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <title>FLYNN | Signal Lab</title>
+
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&display=swap');
+
+
+        :root {
+            --bg: #050810;
+            --panel: #0a0f1a;
+            --panel2: #0d1626;
+            --accent: #00aaff;
+            --accent2: #0088cc;
+            --text: #d5eaff;
+            --muted: #647a8f;
+            --border: rgba(0, 170, 255, 0.18);
+            --red: #ff4d6d;
+            --shadow-glow: 0 0 30px rgba(0, 170, 255, 0.08);
+        }
+
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+        }
+
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            padding: 40px 20px;
+            color: var(--text);
+            background:
+                radial-gradient(ellipse at 50% 0%, #10251a 0%, transparent 55%),
+                linear-gradient(rgba(0, 170, 255, 0.025) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 170, 255, 0.025) 1px, transparent 1px),
+                var(--bg);
+            background-size: auto, 35px 35px, 35px 35px, auto;
+            font-family: 'Rajdhani', sans-serif;
+        }
+
+
+        /* Scanline overlay */
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            background: repeating-linear-gradient(
+                transparent 0px,
+                rgba(0, 170, 255, 0.018) 1px,
+                transparent 2px,
+                transparent 4px
+            );
+            z-index: 5;
+        }
+
+
+        main {
+            width: min(100%, 1000px);
+            margin: auto;
+            position: relative;
+        }
+
+
+        /* Skip link for keyboard users */
+        .skip-link {
+            position: absolute;
+            left: -9999px;
+            top: 0;
+            padding: 10px 16px;
+            background: var(--accent);
+            color: #031009;
+            font-family: 'Share Tech Mono', monospace;
+            z-index: 100;
+        }
+        .skip-link:focus {
+            left: 10px;
+            top: 10px;
+        }
+
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            padding-bottom: 18px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 45px;
+        }
+
+
+        .brand {
+            color: var(--accent);
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 1.1rem;
+            letter-spacing: 3px;
+            font-weight: bold;
+        }
+
+
+        .system-status {
+            color: var(--accent);
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.75rem;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+        }
+
+
+        .dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            margin-right: 8px;
+            border-radius: 50%;
+            background: var(--accent);
+            box-shadow: 0 0 12px var(--accent);
+            animation: blink 1.5s infinite;
+        }
+
+
+        @keyframes blink {
+            50% { opacity: 0.3; }
+        }
+
+
+        .eyebrow {
+            color: var(--accent);
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.8rem;
+            letter-spacing: 4px;
+            margin-bottom: 10px;
+        }
+
+
+        h1 {
+            margin: 0;
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            line-height: 1;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 700;
+        }
+
+
+        h1 span {
+            color: var(--accent);
+            text-shadow: 0 0 20px rgba(0, 170, 255, 0.4);
+        }
+
+
+        .intro {
+            color: var(--muted);
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.85rem;
+            margin: 18px 0 35px;
+            line-height: 1.8;
+        }
+
+
+        .panel {
+            padding: 28px;
+            border: 1px solid var(--border);
+            border-radius: 5px;
+            background: rgba(10, 18, 26, 0.94);
+            box-shadow: var(--shadow-glow);
+            position: relative;
+            overflow: hidden;
+        }
+
+
+        .panel::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--accent);
+            box-shadow: 0 0 15px var(--accent);
+        }
+
+
+        .panel h2 {
+            color: var(--accent);
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 1rem;
+            letter-spacing: 2px;
+            margin: 0 0 22px;
+        }
+
+
+        .section-label {
+            color: var(--muted);
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.72rem;
+            margin-bottom: 12px;
+        }
+
+
+        .command-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            list-style: none;
+            padding: 0;
+            margin: 0 0 25px;
+        }
+
+
+        .command-list li {
+            padding: 15px;
+            background: var(--panel2);
+            border: 1px solid var(--border);
+            transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+        }
+
+
+        .command-list li:hover {
+            border-color: var(--accent);
+            box-shadow: 0 0 12px rgba(0, 170, 255, 0.15);
+            transform: translateY(-2px);
+        }
+
+
+        .command-list code {
+            color: var(--accent);
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.8rem;
+        }
+
+
+        .command-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: center;
+        }
+
+
+        button {
+            min-height: 50px;
+            padding: 0 28px;
+            border: 1px solid var(--accent);
+            border-radius: 3px;
+            background: rgba(0, 170, 255, 0.08);
+            color: var(--accent);
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.25s, color 0.25s, box-shadow 0.25s, transform 0.1s;
+            text-transform: uppercase;
+        }
+
+
+        button:hover:not(:disabled) {
+            background: var(--accent);
+            color: #031009;
+            box-shadow: 0 0 25px rgba(0, 170, 255, 0.4);
+        }
+
+
+        button:active:not(:disabled) {
+            transform: scale(0.98);
+        }
+
+
+        button:focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 3px;
+        }
+
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: wait;
+        }
+
+
+        .secondary-btn {
+            border-color: var(--border);
+            color: var(--muted);
+            background: transparent;
+        }
+
+
+        .secondary-btn:hover:not(:disabled) {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: rgba(0, 170, 255, 0.06);
+            box-shadow: none;
+        }
+
+
+        .message {
+            margin: 22px 0 0;
+            padding: 15px;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.8rem;
+            line-height: 1.6;
+            border-radius: 3px;
+        }
+
+
+        .message-error {
+            color: var(--red);
+            border: 1px solid rgba(255, 77, 109, 0.4);
+            background: rgba(255, 77, 109, 0.06);
+        }
+
+
+        .empty-state {
+            color: var(--muted);
+            border: 1px dashed var(--border);
+            background: var(--panel2);
+        }
+
+
+        .results {
+            display: grid;
+            gap: 18px;
+            margin-top: 35px;
+        }
+
+
+        .results-heading {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 15px;
+        }
+
+
+        .results-heading h2 {
+            margin: 0;
+            color: var(--accent);
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 1.1rem;
+            letter-spacing: 2px;
+        }
+
+
+        .results-heading span {
+            color: var(--muted);
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.75rem;
+        }
+
+
+        .result-card {
+            overflow: hidden;
+            border: 1px solid var(--border);
+            background: var(--panel);
+            border-radius: 4px;
+        }
+
+
+        .result-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 18px;
+            border-bottom: 1px solid var(--border);
+            background: var(--panel2);
+        }
+
+
+        .result-card h3 {
+            margin: 0;
+            color: var(--accent);
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.85rem;
+            overflow-wrap: anywhere;
+        }
+
+
+        .result-card h3::before {
+            content: "> ";
+            color: var(--accent2);
+        }
+
+
+        .copy-btn {
+            min-height: 30px;
+            padding: 0 12px;
+            font-size: 0.68rem;
+            letter-spacing: 1px;
+            flex-shrink: 0;
+        }
+
+
+        pre {
+            max-height: 440px;
+            overflow: auto;
+            margin: 0;
+            padding: 20px;
+            color: #9fe0ff;
+            background: #030805;
+            font: 0.8rem/1.7 'Share Tech Mono', monospace;
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+            tab-size: 2;
+        }
+
+
+        pre::-webkit-scrollbar {
+            width: 7px;
+            height: 7px;
+        }
+
+
+        pre::-webkit-scrollbar-thumb {
+            background: var(--accent2);
+            border-radius: 4px;
+        }
+
+
+        pre::-webkit-scrollbar-track {
+            background: var(--panel);
+        }
+
+
+        .footer {
+            margin-top: 45px;
+            padding-top: 18px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+            color: var(--muted);
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.7rem;
+            letter-spacing: 1px;
+        }
+
+
+        /* Toast notification */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%) translateY(120%);
+            background: var(--panel2);
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.8rem;
+            padding: 12px 22px;
+            border-radius: 3px;
+            box-shadow: 0 0 25px rgba(0, 170, 255, 0.3);
+            z-index: 1000;
+            transition: transform 0.3s ease;
+            pointer-events: none;
+        }
+
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+
+
+        @media (max-width: 520px) {
+            body { padding: 25px 15px; }
+            .panel { padding: 20px; }
+            .topbar { margin-bottom: 35px; }
+            button { width: 100%; }
+            .command-actions { flex-direction: column; }
+            .result-card-header { flex-direction: column; align-items: flex-start; }
+            .copy-btn { align-self: stretch; }
+        }
+
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation: none !important;
+                transition: none !important;
+            }
+            html { scroll-behavior: auto; }
+        }
+
+        :root {
+            color-scheme: dark;
+            --bg: #181426;
+            --panel: #241e36;
+            --panel2: #302845;
+            --accent: #d7ff70;
+            --accent2: #ff9b72;
+            --text: #f4f0ff;
+            --muted: #b0a7c6;
+            --border: rgba(235, 229, 255, .16);
+            --red: #ff8195;
+            --shadow-glow: 0 20px 55px rgba(0, 0, 0, .28);
+        }
+
+        body {
+            padding: 42px 24px;
+            background:
+                radial-gradient(ellipse at 88% 8%, rgba(255, 155, 114, .14), transparent 32%),
+                radial-gradient(ellipse at 8% 62%, rgba(215, 255, 112, .08), transparent 28%),
+                linear-gradient(145deg, #181426, #1e1930 62%, #181426);
+        }
+
+        body::before {
+            display: none;
+        }
+
+        main {
+            width: min(100%, 1120px);
+            display: grid;
+            grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr);
+            column-gap: clamp(30px, 6vw, 76px);
+            align-items: start;
+        }
+
+        .skip-link {
+            background: var(--accent);
+            color: #211a2e;
+        }
+
+        .topbar {
+            grid-column: 1 / -1;
+            margin-bottom: 56px;
+            padding-bottom: 18px;
+            border-bottom-color: var(--border);
+        }
+
+        .brand {
+            color: var(--text);
+        }
+
+        .system-status {
+            padding: 9px 13px;
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            background: rgba(48, 40, 69, .72);
+            color: var(--muted);
+            font-size: .68rem;
+        }
+
+        .dot {
+            background: var(--accent2);
+            box-shadow: 0 0 12px rgba(255, 155, 114, .55);
+        }
+
+        main > section[aria-labelledby="page-heading"] {
+            grid-column: 1;
+            padding: 4px 0 24px;
+        }
+
+        .eyebrow {
+            display: inline-block;
+            padding: 7px 10px;
+            border: 1px solid rgba(255, 155, 114, .34);
+            border-radius: 4px;
+            background: rgba(255, 155, 114, .08);
+            color: var(--accent2);
+            font-size: .68rem;
+            letter-spacing: 2px;
+        }
+
+        h1 {
+            margin-top: 12px;
+            font-size: clamp(3rem, 6vw, 5.4rem);
+            letter-spacing: .01em;
+            line-height: .96;
+        }
+
+        h1 span {
+            color: var(--accent);
+            text-shadow: 0 0 28px rgba(215, 255, 112, .2);
+        }
+
+        .intro {
+            max-width: 430px;
+            margin-top: 22px;
+            color: var(--muted);
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.08rem;
+            line-height: 1.65;
+        }
+
+        .panel {
+            grid-column: 2;
+            padding: clamp(22px, 3vw, 34px);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            background: linear-gradient(145deg, rgba(48, 40, 69, .96), rgba(36, 30, 54, .98));
+            box-shadow: var(--shadow-glow);
+        }
+
+        .panel::before {
+            height: 2px;
+            background: linear-gradient(90deg, var(--accent2), var(--accent) 45%, transparent 90%);
+            box-shadow: none;
+        }
+
+        .panel h2,
+        .results-heading h2 {
+            color: var(--text);
+            letter-spacing: 1px;
+        }
+
+        .section-label {
+            color: var(--muted);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .command-list {
+            grid-template-columns: repeat(auto-fit, minmax(min(100%, 205px), 1fr));
+            gap: 10px;
+        }
+
+        .command-list li {
+            display: flex;
+            align-items: center;
+            min-height: 62px;
+            border-color: var(--border);
+            border-radius: 7px;
+            background: rgba(24, 20, 38, .62);
+        }
+
+        .command-list li:hover {
+            border-color: rgba(215, 255, 112, .6);
+            background: rgba(215, 255, 112, .06);
+            box-shadow: none;
+        }
+
+        .command-list code {
+            color: var(--text);
+        }
+
+        .command-list li::first-letter {
+            color: var(--accent2);
+        }
+
+        button {
+            border-color: var(--accent);
+            border-radius: 6px;
+            background: var(--accent);
+            color: #211a2e;
+        }
+
+        button:hover:not(:disabled) {
+            background: #e2ff9b;
+            color: #211a2e;
+            box-shadow: 0 8px 24px rgba(215, 255, 112, .18);
+        }
+
+        button:focus-visible {
+            outline-color: var(--accent2);
+        }
+
+        .secondary-btn {
+            border-color: var(--border);
+            background: transparent;
+            color: var(--text);
+        }
+
+        .secondary-btn:hover:not(:disabled) {
+            border-color: var(--accent2);
+            color: var(--accent2);
+            background: rgba(255, 155, 114, .07);
+        }
+
+        .message {
+            border-radius: 7px;
+        }
+
+        .message-error {
+            color: var(--red);
+            border-color: rgba(255, 129, 149, .35);
+            background: rgba(255, 129, 149, .07);
+        }
+
+        .empty-state {
+            border-color: var(--border);
+            background: rgba(24, 20, 38, .48);
+        }
+
+        .results {
+            grid-column: 1 / -1;
+            width: 100%;
+            margin-top: 42px;
+        }
+
+        .results-heading {
+            border-bottom-color: var(--border);
+        }
+
+        .results-heading h2 {
+            color: var(--accent);
+        }
+
+        .result-card {
+            border-color: var(--border);
+            border-radius: 9px;
+        }
+
+        .result-card-header {
+            background: var(--panel2);
+        }
+
+        .result-card h3 {
+            color: var(--text);
+        }
+
+        .result-card h3::before {
+            color: var(--accent2);
+        }
+
+        .copy-btn {
+            min-height: 34px;
+            border-color: var(--border);
+            background: transparent;
+            color: var(--accent);
+        }
+
+        .copy-btn:hover:not(:disabled) {
+            border-color: var(--accent);
+            background: rgba(215, 255, 112, .08);
+            color: var(--accent);
+            box-shadow: none;
+        }
+
+        pre {
+            color: #e5dcf3;
+            background: #171321;
+        }
+
+        pre::-webkit-scrollbar-thumb {
+            background: var(--accent2);
+        }
+
+        .toast {
+            border-color: var(--accent2);
+            border-radius: 8px;
+            background: var(--panel2);
+            color: var(--accent);
+            box-shadow: 0 12px 35px rgba(0, 0, 0, .35);
+        }
+
+        .footer {
+            grid-column: 1 / -1;
+            margin-top: 50px;
+            border-top-color: var(--border);
+        }
+
+        @media (max-width: 760px) {
+            body {
+                padding: 30px 18px;
+            }
+
+            main {
+                display: block;
+            }
+
+            .topbar {
+                margin-bottom: 42px;
+            }
+
+            main > section[aria-labelledby="page-heading"] {
+                padding-bottom: 12px;
+            }
+
+            .panel {
+                margin-top: 18px;
+            }
+
+            .results {
+                margin-top: 36px;
+            }
+
+            .footer {
+                margin-top: 38px;
+            }
+        }
+
+        @media (max-width: 520px) {
+            .topbar {
+                align-items: flex-start;
+            }
+
+            .system-status {
+                font-size: .58rem;
+            }
+
+            h1 {
+                font-size: clamp(2.7rem, 13vw, 4rem);
+            }
+        }
+    </style>
+</head>
+
+
+<body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+
+    <main id="main-content">
+        <header class="topbar">
+            <div class="brand">FLYNN / SIGNAL LAB</div>
+            <div class="system-status" role="status" aria-live="polite">
+                <span class="dot" aria-hidden="true"></span>
+                LOCAL DIAGNOSTICS // READ ONLY
+            </div>
+        </header>
+
+
+        <section aria-labelledby="page-heading">
+            <p class="eyebrow">NETWORK FIELD KIT / 01</p>
+            <h1 id="page-heading">ROUTER <span>SIGNAL</span><br> CHECK_</h1>
+            <p class="intro">
+                A focused console for checking device details, interface status, and active configuration.
+            </p>
+        </section>
+
+        <section class="panel" aria-labelledby="commands-heading">
+            <h2 id="commands-heading">[ CHECK SEQUENCE ]</h2>
+            <p class="section-label">Preset read-only commands</p>
+
+
+            <ul class="command-list">
+                <li><code>01 // show version</code></li>
+                <li><code>02 // show ip interface brief</code></li>
+                <li><code>03 // show running-config</code></li>
+            </ul>
+
+
+            <form method="post" id="commandForm">
+                <div class="command-actions">
+                    <button type="submit" id="runButton">
+                        RUN CHECKS
+                    </button>
+                    {% if results %}
+                    <button type="button" id="clearButton" class="secondary-btn">
+                        RESET OUTPUT
+                    </button>
+                    {% endif %}
+                </div>
+            </form>
+
+
+            {% if error %}
+                <p class="message message-error" role="alert">
+                    [ ERROR ] {{ error }}
+                </p>
+            {% elif not results %}
+                <p class="message empty-state" role="status">
+                    [ READY ] Run the checks to view device output.
+                </p>
+            {% endif %}
+        </section>
+
+
+        {% if results %}
+        <section class="results" aria-labelledby="results-heading">
+            <div class="results-heading">
+                <h2 id="results-heading">[ RESPONSE LOG ]</h2>
+                <span>{{ results|length }} COMMAND(S) EXECUTED</span>
+            </div>
+
+
+            {% for command, output in results.items() %}
+            <article class="result-card">
+                <div class="result-card-header">
+                    <h3>{{ command }}</h3>
+                    <button
+                        type="button"
+                        class="copy-btn"
+                        data-copy-target="output-{{ loop.index }}"
+                        aria-label="Copy output of {{ command }}"
+                    >
+                        [ COPY ]
+                    </button>
+                </div>
+                <pre id="output-{{ loop.index }}">{{ output }}</pre>
+            </article>
+            {% endfor %}
+        </section>
+        {% endif %}
+
+
+        <footer class="footer">
+            <span>FLYNN / SIGNAL LAB</span>
+            <span>READ-ONLY DEVICE CHECKS</span>
+        </footer>
+    </main>
+
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+
+    <script>
+        (function () {
+            const form = document.getElementById("commandForm");
+            const runButton = document.getElementById("runButton");
+            const toast = document.getElementById("toast");
+            const STORAGE_KEY = "netx-results";
+
+
+            function showToast(message) {
+                toast.textContent = message;
+                toast.classList.add("show");
+                clearTimeout(showToast._timer);
+                showToast._timer = setTimeout(function () {
+                    toast.classList.remove("show");
+                }, 2200);
+            }
+
+
+            // Persist results across reloads via sessionStorage
+            if (window.location.protocol !== "file:") {
+                try {
+                    const stored = sessionStorage.getItem(STORAGE_KEY);
+                    const preBlocks = document.querySelectorAll("pre[id^='output-']");
+                    if (stored && preBlocks.length === 0) {
+                        // Optional: restore previous output into a placeholder
+                        // (Left as an extension point; currently no-op to keep
+                        // server-rendered DOM as source of truth.)
+                    }
+                    if (preBlocks.length) {
+                        const snapshot = {};
+                        preBlocks.forEach(function (pre) {
+                            snapshot[pre.id] = pre.textContent;
+                        });
+                        sessionStorage.setItem(STORAGE_KEY, JSON.stringify(snapshot));
+                    }
+                } catch (e) {
+                    /* Storage may be blocked — ignore */
+                }
+            }
+
+
+            // Submit handler with accessible loading state
+            if (form && runButton) {
+                form.addEventListener("submit", function () {
+                    runButton.disabled = true;
+                    runButton.textContent = "[ EXECUTING... ]";
+                    runButton.setAttribute("aria-busy", "true");
+                });
+            }
+
+
+            // Copy-to-clipboard for each result card
+            document.querySelectorAll("[data-copy-target]").forEach(function (btn) {
+                btn.addEventListener("click", async function () {
+                    const target = document.getElementById(btn.dataset.copyTarget);
+                    if (!target) return;
+                    const text = target.textContent;
+
+
+                    try {
+                        if (navigator.clipboard && window.isSecureContext) {
+                            await navigator.clipboard.writeText(text);
+                        } else {
+                            // Fallback for non-secure contexts
+                            const ta = document.createElement("textarea");
+                            ta.value = text;
+                            ta.style.position = "fixed";
+                            ta.style.opacity = "0";
+                            document.body.appendChild(ta);
+                            ta.select();
+                            document.execCommand("copy");
+                            document.body.removeChild(ta);
+                        }
+                        showToast("[ COPIED TO CLIPBOARD ]");
+                    } catch (err) {
+                        showToast("[ COPY FAILED ]");
+                    }
+                });
+            });
+
+
+            // Clear output
+            const clearBtn = document.getElementById("clearButton");
+            if (clearBtn) {
+                clearBtn.addEventListener("click", function () {
+                    try {
+                        sessionStorage.removeItem(STORAGE_KEY);
+                    } catch (e) { /* ignore */ }
+                    const resultsSection = document.querySelector(".results");
+                    if (resultsSection) resultsSection.remove();
+                    const emptyState = document.createElement("p");
+                    emptyState.className = "message empty-state";
+                    emptyState.setAttribute("role", "status");
+                    emptyState.textContent = "[ SYSTEM READY ] Output cleared. Waiting for command execution...";
+                    document.querySelector(".panel").appendChild(emptyState);
+                    clearBtn.remove();
+                });
+            }
+
+
+            // Keyboard shortcut: Ctrl/Cmd + Enter to run
+            document.addEventListener("keydown", function (e) {
+                if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
+                    if (!runButton.disabled) {
+                        form.requestSubmit ? form.requestSubmit() : form.submit();
+                    }
+                }
+            });
+        })();
+    </script>
+</body>
+</html>
